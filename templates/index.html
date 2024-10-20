@@ -4,21 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOME</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/a11y-dark.min.css" integrity="sha512-Vj6gPCk8EZlqnoveEyuGyYaWZ1+jyjMPg8g4shwyyNlRQl6d3L9At02ZHQr5K6s5duZl/+YKMnM3/8pDhoUphg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .marker{
             background-color: yellow;
         }
+
+        .code-block-container {
+    position: relative;
+    /* display: inline-block; */
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 16px;
+    color: #333;
+    filter: brightness(0) invert(1);
+}
+
+.copy-btn img {
+    width: 20px;
+    height: 20px;
+}
+
     </style>
 </head>
 <body>
     
         
     {% for data in data %}
-    {{data.head |safe}}
+    <h1>{{data.head}}</h1>
     
     {{data.information |safe}}
 
     {% endfor %}
 
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" integrity="sha512-6yoqbrcLAHDWAdQmiRlHG4+m0g/CT/V9AGyxabG8j7Jk8j3r3K6due7oqpiRMZqcYe9WM2gPcaNNxnl2ux+3tA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    hljs.highlightAll();
+</script>
+<script>
+    
+document.addEventListener("DOMContentLoaded", function() {
+    // Add copy button to each code block
+    document.querySelectorAll("pre code").forEach(function(codeBlock) {
+        // Create a wrapper for the code block
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("code-block-container");
+        codeBlock.parentNode.replaceWith(wrapper);
+        wrapper.appendChild(codeBlock.parentNode);
+
+        // Create the copy button
+        const copyButton = document.createElement("button");
+        copyButton.classList.add("copy-btn");
+        const copyIcon = document.createElement("img");
+        copyIcon.src = "/static/clipboard/copy-icon.png"; // Replace with actual path
+        copyIcon.alt = "Copy";
+        copyButton.appendChild(copyIcon);
+        copyButton.onclick = () => copyToClipboard(codeBlock, copyButton);
+
+        // Add the button to the wrapper
+        wrapper.appendChild(copyButton);
+    });
+});
+
+function copyToClipboard(codeBlock, button) {
+    navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+        // Change icon to indicate success
+        const checkIcon = "/static/clipboard/check-icon.png"; // Replace with actual path
+        button.querySelector("img").src = checkIcon;
+        setTimeout(() => {
+            // Revert back to the original copy icon
+            const copyIcon = "/static/clipboard/copy-icon.png"; // Replace with actual path
+            button.querySelector("img").src = copyIcon;
+        }, 2000);
+    }).catch(err => {
+        console.error("Failed to copy text: ", err);
+    });
+}
+
+</script>
 </html>
